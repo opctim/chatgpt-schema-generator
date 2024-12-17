@@ -1,7 +1,7 @@
 {
   "name": "opctim/chatgpt-schema-generator",
   "description": "This bundle creates a JSON schema from your classes or DTOs to be used with the ChatGPT API so that you get back what you expect.",
-  "type": "symfony-bundle",
+  "type": "library",
   "license": "MIT",
   "require": {
     "php": ">=8.3",
