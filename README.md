@@ -40,7 +40,7 @@ $schema = $this->generator->generateSchema(User::class);
 // Specify the schema (you can play with this here: https://platform.openai.com/playground/chat?models=gpt-4o)
 $responseFormat = [
     'type' => 'json_schema',
-    'json_schema' => $schema
+    'json_schema' => $schema->getSchema()
 ];
 
 $prompt = 'Generate an example user and return based on the input schema with the name ' . $schema->getName();
