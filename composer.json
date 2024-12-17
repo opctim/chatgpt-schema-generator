@@ -6,8 +6,8 @@
   "require": {
     "php": ">=8.3",
     "phpdocumentor/reflection-docblock": "^5.6",
-    "symfony/property-info": "^5.4",
-    "symfony/serializer": "^5.4"
+    "symfony/property-info": ">=5.4",
+    "symfony/serializer": ">=5.4"
   },
   "authors": [
     {
