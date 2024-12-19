@@ -55,6 +55,120 @@ $user = $serializer->deserialize($answer, User::class, 'json');
 // Done, ready to use your example user object!
 ```
 
+## Excluding Properties & Classes
+
+You can either replace properties:
+
+```php
+<?php
+declare(strict_types=1);
+
+use Opctim\ChatGpt\SchemaGenerator\Attribute\Excluded;
+
+class User
+{
+    #[Excluded]
+    private int $id;
+    
+    /**
+     * This will be ignored too!
+     * 
+     * @internal 
+     */
+    private int $someNumber;
+    
+    // [...]
+}
+```
+
+Or the whole class:
+
+```php
+<?php
+declare(strict_types=1);
+
+use Opctim\ChatGpt\SchemaGenerator\Attribute\Excluded;
+
+#[Excluded]
+class User
+{
+    // [...]
+}
+```
+
+### Union Types
+
+Union types will be returned as oneOf in the JSON schema.
+
+If your class has a property that looks like this:
+
+```php
+<?php
+declare(strict_types=1);
+
+use Opctim\ChatGpt\SchemaGenerator\Attribute\Excluded;
+
+class User
+{
+    private Address|Account $addressOrAccount;
+}
+```
+
+The result will be:
+
+```json
+{
+  "name": "User",
+  "strict": false,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "addressOrAccount": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "street": {
+                "description": "Street name.",
+                "type": "string"
+              },
+              "city": {
+                "description": "City name.",
+                "type": "string"
+              },
+              "postalCode": {
+                "description": "Postal code.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "street",
+              "city",
+              "postalCode"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "bankName": {
+                "description": "The name of the bank.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "bankName"
+            ]
+          }
+        ]
+      }
+    },
+    "required": [
+      "addressOrAccount"
+    ]
+  }
+}
+```
+
 ### Schema output example
 ```php
 <?php
@@ -74,7 +188,8 @@ $schema->getJson(); // Returns the same as (string)$schema
 echo (string)$schema;
 ```
 
-Result
+**Result**
+
 ```json
 {
   "name": "User",
@@ -82,10 +197,6 @@ Result
   "schema": {
     "type": "object",
     "properties": {
-      "id": {
-        "description": "User ID.",
-        "type": "integer"
-      },
       "role": {
         "type": "string",
         "enum": [
@@ -149,14 +260,52 @@ Result
             "postalCode"
           ]
         }
+      },
+      "addressOrAccount": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "street": {
+                "description": "Street name.",
+                "type": "string"
+              },
+              "city": {
+                "description": "City name.",
+                "type": "string"
+              },
+              "postalCode": {
+                "description": "Postal code.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "street",
+              "city",
+              "postalCode"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "bankName": {
+                "description": "The name of the bank.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "bankName"
+            ]
+          }
+        ]
       }
     },
     "required": [
-      "id",
       "role",
       "address",
       "tags",
-      "previousAddresses"
+      "previousAddresses",
+      "addressOrAccount"
     ]
   }
 }
@@ -169,5 +318,5 @@ Tests are located inside the `tests/` folder and can be run with `vendor/bin/php
 ```shell
 composer install
 
-vendor/bin/phpunit       
+vendor/bin/phpunit
 ```

@@ -4,10 +4,6 @@
   "schema": {
     "type": "object",
     "properties": {
-      "id": {
-        "description": "User ID.",
-        "type": "integer"
-      },
       "role": {
         "type": "string",
         "enum": [
@@ -71,14 +67,52 @@
             "postalCode"
           ]
         }
+      },
+      "addressOrAccount": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "street": {
+                "description": "Street name.",
+                "type": "string"
+              },
+              "city": {
+                "description": "City name.",
+                "type": "string"
+              },
+              "postalCode": {
+                "description": "Postal code.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "street",
+              "city",
+              "postalCode"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "bankName": {
+                "description": "The name of the bank.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "bankName"
+            ]
+          }
+        ]
       }
     },
     "required": [
-      "id",
       "role",
       "address",
       "tags",
-      "previousAddresses"
+      "previousAddresses",
+      "addressOrAccount"
     ]
   }
 }
